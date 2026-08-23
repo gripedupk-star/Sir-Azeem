@@ -9,6 +9,7 @@ import android.service.notification.StatusBarNotification
 import com.sirazeem.agent.data.AgentStore
 import com.sirazeem.agent.ai.AgentEngine
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch

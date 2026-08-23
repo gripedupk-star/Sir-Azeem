@@ -61,3 +61,6 @@ A workflow is included under `.github/workflows/build-apk.yml`.
 ## Safety
 
 Do not store payment credentials or secrets in source code. API keys are stored locally by this starter and should be protected further before production deployment.
+
+## Build fix included
+The latest project includes the required `kotlinx.coroutines.cancel` import that fixes the `Unresolved reference: cancel` compiler error in the WhatsApp notification listener.

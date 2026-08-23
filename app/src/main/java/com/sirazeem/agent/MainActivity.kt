@@ -421,7 +421,19 @@ private fun ScreenTitle(title: String, subtitle: String) {
 }
 
 private fun isNotificationListenerEnabled(context: Context): Boolean {
-    val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    val component = ComponentName(context, com.sirazeem.agent.whatsapp.WhatsAppNotificationListener::class.java)
-    return manager.isNotificationListenerAccessGranted(component)
+    val component = ComponentName(
+        context,
+        com.sirazeem.agent.whatsapp.WhatsAppNotificationListener::class.java
+    )
+
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.isNotificationListenerAccessGranted(component)
+    } else {
+        val enabled = Settings.Secure.getString(
+            context.contentResolver,
+            "enabled_notification_listeners"
+        ) ?: return false
+        enabled.split(":").any { ComponentName.unflattenFromString(it) == component }
+    }
 }
