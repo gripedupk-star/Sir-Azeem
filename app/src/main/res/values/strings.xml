@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sir Azeem</string>
+    <string name="accessibility_description">Sir Azeem uses accessibility only to assist with WhatsApp actions that Android exposes to accessibility services.</string>
+</resources>
