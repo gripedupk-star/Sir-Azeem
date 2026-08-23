@@ -1,0 +1,108 @@
+name: Build Sir Azeem APK
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+
+    name: Build Android APK
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # --------------------------------------------------
+      # 1. Get project source code
+      # --------------------------------------------------
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+
+      # --------------------------------------------------
+      # 2. Install Java 17
+      # --------------------------------------------------
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+
+      # --------------------------------------------------
+      # 3. Setup Gradle
+      # --------------------------------------------------
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+
+
+      # --------------------------------------------------
+      # 4. Make Gradle executable
+      # --------------------------------------------------
+      - name: Make Gradle Executable
+        run: chmod +x gradlew
+        if: ${{ hashFiles('gradlew') != '' }}
+
+
+      # --------------------------------------------------
+      # 5. Build Debug APK
+      # --------------------------------------------------
+      - name: Build Debug APK
+        run: |
+          if [ -f "./gradlew" ]; then
+            ./gradlew :app:assembleDebug --stacktrace
+          else
+            gradle :app:assembleDebug --stacktrace
+          fi
+
+
+      # --------------------------------------------------
+      # 6. Check generated APK
+      # --------------------------------------------------
+      - name: Verify APK
+        run: |
+          echo "Checking APK..."
+          ls -lah app/build/outputs/apk/debug/
+          
+          if [ ! -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+            echo "ERROR: APK was not generated!"
+            exit 1
+          fi
+          
+          echo "APK successfully generated."
+
+
+      # --------------------------------------------------
+      # 7. Upload APK
+      # --------------------------------------------------
+      - name: Upload Sir Azeem APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sir-Azeem-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+
+      # --------------------------------------------------
+      # 8. Display APK information
+      # --------------------------------------------------
+      - name: APK Information
+        run: |
+          echo "=========================================="
+          echo "       SIR AZEEM APK BUILD SUCCESS"
+          echo "=========================================="
+          ls -lh app/build/outputs/apk/debug/app-debug.apk
+          echo "=========================================="
